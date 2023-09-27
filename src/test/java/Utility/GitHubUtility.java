@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GitHubUtility {
-    private static final String TOKEN = "";
-    private static final String REPO_OWNER = "";
-    private static final String REPO_NAME = "";
-    private static final String FILE_PATH = "";
+    private static final String TOKEN = "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";
+    private static final String REPO_OWNER = "MayasProperty";
+    private static final String REPO_NAME = "Assessment";
+    private static final String FILE_PATH = "src/test/resources/company.csv";
 
     public String getCSVContent() {
         String url = String.format("https://api.github.com/repos/%s/%s/contents/%s", REPO_OWNER, REPO_NAME, FILE_PATH);
