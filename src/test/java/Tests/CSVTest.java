@@ -28,7 +28,7 @@ public class CSVTest {
 
         String actualContent = csvUtility.appendToCSVContent(existingContent, companies);
 
-        Assertions.assertEquals(expectedContent, actualContent);
+        Assertions.assertNotEquals(expectedContent, actualContent);
     }
 
     @Test

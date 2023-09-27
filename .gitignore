@@ -11,6 +11,7 @@ target/
 *.iws
 *.iml
 *.ipr
+*.xml
 
 ### Mac OS ###
 .DS_Store
