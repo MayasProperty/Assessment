@@ -9,13 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GitHubUtility {
-    private static final String TOKEN = "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";
-    private static final String REPO_OWNER = "MayasProperty";
-    private static final String REPO_NAME = "Assessment";
+    private static final String TOKEN = "";
+    private static final String REPO_OWNER = "";
+    private static final String REPO_NAME = "";
     private static final String FILE_PATH = "src/test/resources/company.csv";
 
-    public String getCSVContent() {
-        String url = String.format("https://api.github.com/repos/%s/%s/contents/%s", REPO_OWNER, REPO_NAME, FILE_PATH);
+    public String getCSVContent(String branchName) {
+        String url = String.format("https://api.github.com/repos/%s/%s/contents/%s", REPO_OWNER, REPO_NAME, FILE_PATH, branchName);
 
         RequestSpecification request = RestAssured.given()
                 .header("Authorization", "token " + TOKEN)
@@ -69,8 +69,7 @@ public class GitHubUtility {
             throw new RuntimeException("Failed to update CSV content. HTTP error code: " + response.getStatusCode());
         }
     }
-
-    public void mergeBranches() {
+    public void mergeBranches(String baseBranch, String headBranch) {
         String url = String.format("https://api.github.com/repos/%s/%s/merges", REPO_OWNER, REPO_NAME);
 
         RequestSpecification request = RestAssured.given()
@@ -78,9 +77,9 @@ public class GitHubUtility {
                 .header("Content-Type", "application/json");
 
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("base", "SECOND_BRANCH_NAME");
-        requestBody.put("head", "main");
-        requestBody.put("commit_message", "Merging main into second branch");
+        requestBody.put("base", baseBranch);
+        requestBody.put("head", headBranch);
+        requestBody.put("commit_message", "Merging " + headBranch + " into " + baseBranch);
 
         Response response = request.body(requestBody).post(url);
 
@@ -88,5 +87,24 @@ public class GitHubUtility {
             throw new RuntimeException("Failed to merge branches. HTTP error code: " + response.getStatusCode());
         }
     }
+
+    public String getCSVContentFromBranch(String branchName) {
+        String url = String.format("https://api.github.com/repos/%s/%s/contents/%s?ref=%s", REPO_OWNER, REPO_NAME, FILE_PATH, branchName);
+
+        RequestSpecification request = RestAssured.given()
+                .header("Authorization", "token " + TOKEN)
+                .header("Accept", "application/vnd.github.v3+json");
+
+        Response response = request.get(url);
+
+        if (response.getStatusCode() == 200) {
+            String encodedContent = response.jsonPath().getString("content");
+            byte[] decodedContent = Base64.decodeBase64(encodedContent);
+            return new String(decodedContent);
+        } else {
+            throw new RuntimeException("Failed to fetch CSV content from branch " + branchName + ". HTTP error code: " + response.getStatusCode());
+        }
+    }
+
 }
 
